@@ -1,0 +1,5 @@
+
+Current Status:
+npm install -> OK
+run installer on web -> Failed
+./scripts/install-sdk.sh -> OK
