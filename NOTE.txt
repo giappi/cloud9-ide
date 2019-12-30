@@ -1,5 +1,10 @@
 
 Current Status:
 npm install -> OK
+run installer on web -> Stuck
+./scripts/install-sdk.sh -> OK
+-----------------------------
+Before Status:
+npm install -> OK
 run installer on web -> Failed
 ./scripts/install-sdk.sh -> OK

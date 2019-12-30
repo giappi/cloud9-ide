@@ -81,8 +81,10 @@ updateCore() {
 
 
 
-installGlobalDeps() {
-    if ! [[ -f ~/.c9/installed ]]; then
+installGlobalDeps()
+{
+	/* @HARDCODE */
+    if ! [[ -f "~/.c10/installed" ]]; then
         if [[ $os == "windows" ]]; then
             URL=https://raw.githubusercontent.com/cloud9ide/sdk-deps-win32
         else

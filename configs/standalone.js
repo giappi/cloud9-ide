@@ -1,3 +1,6 @@
+
+const CONFIG = require("settings/CONFIG");
+
 module.exports = function(config, optimist) {
     
     var path = require("path");
@@ -86,7 +89,7 @@ module.exports = function(config, optimist) {
         config.sourceDir = path.dirname(__dirname);
     
     config.workspaceDir = baseProc;
-    config.settingDir = argv["setting-path"];
+    config.settingDir = argv["setting-path"] ? argv["setting-path"] : CONFIG.settingDir;
     config.projectName = path.basename(baseProc);
     config.testing = testing;
     config.debug = debug;

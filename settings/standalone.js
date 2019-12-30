@@ -1,3 +1,6 @@
+
+const CONFIG = require("settings/CONFIG");
+
 var assert = require("assert");
 
 module.exports = function(manifest, installPath) {
@@ -22,19 +25,27 @@ module.exports = function(manifest, installPath) {
     var win32 = process.platform == "win32";
     
     if (win32)
+    {
         readWin32Settings();
+    }
     
-    var home = process.env.HOME;
-    assert(home, "home directory must be set");
+    var home = CONFIG.home;
+    console.log("[Giappi] home=", home);
+    assert(home, "Home directory must be set");
     
     if (!installPath)
-        installPath = path.join(home, ".c9");
+    {
+        installPath = CONFIG.c9binPath;
+        console.log("[Giappi] installPath=", installPath);
+    }
     
     var correctedInstallPath = installPath.substr(0, home.length) == home
         ? "~" + installPath.substr(home.length)
         : installPath;
-    var inContainer = os.hostname().match(/-\d+$/);
+    //var inContainer = os.hostname().match(/-\d+$/);
+    var inContainer = true;
     
+    console.log("----------------------------------");
     var config = {
         standalone: true,
         startBridge: true,
@@ -42,6 +53,7 @@ module.exports = function(manifest, installPath) {
         workspaceDir: workspaceDir,
         projectName: path.basename(workspaceDir),
         homeDir: home,
+        c9binPath: CONFIG.c9binPath,
         workspaceId: "devel",
         workspaceName: "devel",
         tmpdir: "/tmp",
@@ -52,13 +64,15 @@ module.exports = function(manifest, installPath) {
         pid: process.pid,
         port: process.env.PORT || 8181,
         host: process.env.IP || (inContainer ? "0.0.0.0" : "127.0.0.1"),
+
         testing: false,
         platform: process.platform,
         arch: process.arch,
-        tmux: path.join(installPath, "bin/tmux"),
-        nakBin: path.join(__dirname, "../node_modules/nak/bin/nak"),
+        //tmux: path.join(installPath, "bin/tmux"),
+        tmux:  CONFIG.tmux,
+        nakBin: CONFIG.nakBin,
         bashBin: "bash",
-        nodeBin: [path.join(installPath, win32 ? "node.exe" : "node/bin/node"), process.execPath],
+        nodeBin: [CONFIG.nodeBin, process.execPath],
         installPath: installPath,
         correctedInstallPath: correctedInstallPath,
         staticPrefix: "/static",
@@ -135,6 +149,9 @@ module.exports = function(manifest, installPath) {
         localExtend: true,
         extendDirectory: __dirname + "/../plugins"
     };
+    
+    console.log(config);
+    console.log("----------------------------------");
 
     config.extendOptions = {
         user: config.user,

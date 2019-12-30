@@ -1,5 +1,7 @@
 "use strict";
 
+const CONFIG = require("settings/CONFIG");
+
 plugin.consumes = [
     "connect.static", 
     "connect",
@@ -342,7 +344,7 @@ function getSettings(configName, options) {
     var installPath = options.settingDir || options.installPath || "";
     var workspaceDir = options.options.workspaceDir;
     var settings = {
-        "user": join(installPath, "user.settings"),
+        "user": CONFIG.settingDir + "/user.settings",
         "project": join(options.local ? installPath : join(workspaceDir, ".c9"), "project.settings"),
         "state": join(options.local ? installPath : join(workspaceDir, ".c9"), "state.settings")
     };

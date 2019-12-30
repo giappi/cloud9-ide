@@ -33,7 +33,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
             packagePath: "plugins/c9.ide.find/find.nak",
             ignore: "file7_ignorable.rb",
             basePath: baseProc,
-            installPath: "~/.c9",
+            installPath: "~/.c9", /* @HARDCODE */
             testing: true,
             nak: nak,
             node: "node"

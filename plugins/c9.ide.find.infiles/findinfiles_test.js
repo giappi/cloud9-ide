@@ -2,6 +2,9 @@
 
 "use client";
 
+const CONFIG = require("settings/CONFIG");
+console.log("[Giappi] findinfiles.js CONFIG:", CONFIG);
+
 require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"], 
   function (architect, chai, baseProc) {
     var expect = chai.expect;
@@ -59,7 +62,7 @@ require(["lib/architect/architect", "lib/chai/chai", "/vfs-root"],
         {
             packagePath: "plugins/c9.ide.find/find.nak",
             ignore: "",
-            installPath: "~/.c9",
+            installPath: CONFIG.c9binPath,
             testing: true,
             nak: nak,
             node: "node"

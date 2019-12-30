@@ -4,7 +4,7 @@ module.exports = function(session, options) {
     session.install({
         "name": "Nak",
         "description": "Fast file searches for Cloud9",
-        "cwd": "~/.c9"
+        "cwd": "~/.c9" /* @HARDCODE */
     }, {
         "npm": "https://github.com/c9/nak/tarball/c9"
     });

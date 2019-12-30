@@ -32,7 +32,7 @@ define(function(require, exports, module) {
         var MAIN_IGNORE = (options.local ? options.installPath : "/.c9") + "/.nakignore";
         var TEMPLATE = require("text!./nakignore-template")
             + "\n" + (options.ignore || "");
-        var NAK = options.nak || "~/.c9/node_modules/nak/bin/nak";
+        var NAK = options.nak;
         var NODE = options.node;
         
         if (NODE && Array.isArray(NODE)) 

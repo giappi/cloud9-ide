@@ -1,3 +1,7 @@
+
+const CONFIG = require("settings/CONFIG");
+console.log("[Giappi] server.js CONFIG:", CONFIG);
+
 require("amd-loader");
 
 var fs = require("fs");
@@ -23,7 +27,7 @@ var SAFE_PORTS = [2222, 2310, 3000, 3001, 3030, 3210, 3333, 4000, 4001,
 
 var installPath = process.platform == "dar-win" // disabled for sdk
     ? "/Library/Application Support/Cloud9"
-    : join(process.env.HOME, ".c9");
+    : CONFIG.c9binPath;
     
 // Support legacy installations
 if (installPath === "/Library/Application Support/Cloud9" 
@@ -261,7 +265,7 @@ var server = {
             options.installed = true;
             options.settingDir = settingDir;
             var settings = {
-                "user": join(settingDir, "user.settings"),
+                "user": CONFIG.settingDir + "/user.settings",
                 "profile": join(settingDir, "profile.settings"),
                 "project": join(settingDir, "project.settings"),
                 "state": stateConfigFilePath

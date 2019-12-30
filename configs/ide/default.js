@@ -1,3 +1,7 @@
+
+const CONFIG = require("settings/CONFIG");
+console.log("[Giappi] default.js CONFIG:", CONFIG);
+
 define(function(require, exports, module) {
 var assert = require("assert");
 
@@ -199,7 +203,7 @@ module.exports = function(options) {
             useHttp: true,
             basePath: workspaceDir,
             installPath: options.installPath,
-            nak: options.nakBin || "~/.c9/node_modules/nak/bin/nak",
+            nak: options.nakBin,
             node: options.nodeBin,
             local: options.local,
         },
