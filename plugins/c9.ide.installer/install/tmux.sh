@@ -1,3 +1,15 @@
+
+VERSION_LIBEVENT="2.1.8"
+VERSION_LIBNCURSE="6.0"
+VERSION_TMUX="1.9"
+FILE_LIBEVENT_NAME="libevent-${VERSION_LIBEVENT}-stable"
+FILE_LIBNCURSE_NAME="ncurses-${VERSION_LIBNCURSE}"
+FILE_TMUX_NAME="tmux-${VERSION_TMUX}"
+FILE_LIB_EXT="tar.gz"
+FILE_LIBEVENT="${FILE_LIBEVENT_NAME}.${FILE_LIB_EXT}"
+FILE_LIBNCURSE="${FILE_LIBNCURSE_NAME}.${FILE_LIB_EXT}"
+FILE_TMUX="${FILE_TMUX_NAME}.${FILE_LIB_EXT}"
+
 set -e
 
 has() {
@@ -14,58 +26,69 @@ else
     exit 1
 fi
 
-C9_DIR="$HOME/.c9"
+C9_DIR="$HOME/.c10";
+
+if [ -z "$1" ]; then
+    echo "\\1 is empty.";
+else
+    C9_DIR="$1/.c10";
+    echo "C9_DIR == '${C9_DIR}'";
+fi;
+
+mkdir -p "$C9_DIR"
 cd "$C9_DIR"
 PATH="$C9_DIR/node/bin/:$C9_DIR/node_modules/.bin:$PATH";
 
 compile_tmux(){
+
   cd "$C9_DIR"
-  echo "Compiling libevent..."
-  tar xzf libevent-2.0.21-stable.tar.gz
-  rm libevent-2.0.21-stable.tar.gz
-  cd libevent-2.0.21-stable
-  echo "Configuring Libevent"
-  ./configure --prefix="$C9_DIR/local"
-  echo "Compiling Libevent"
+  echo "::Compiling libevent..."
+  tar xzf "${FILE_LIBEVENT}";
+  #rm "${FILE_LIBEVENT}";
+  cd "${FILE_LIBEVENT_NAME}";
+  echo "::Configuring Libevent"
+  ./configure --disable-shared --prefix="$C9_DIR/local"
+  echo "::Compiling Libevent"
   make
-  echo "Installing libevent"
+  echo "::Installing libevent"
   make install
  
   cd "$C9_DIR"
-  echo "Compiling ncurses..."
-  tar xzf ncurses-5.9.tar.gz
-  rm ncurses-5.9.tar.gz
-  cd ncurses-5.9
-  echo "Configuring Ncurses"
+  echo ":: Compiling ncurses..."
+  tar xzf "${FILE_LIBNCURSE}";
+  #rm "${FILE_LIBNCURSE}";
+  cd "${FILE_LIBNCURSE_NAME}";
+  echo ":: Configuring Ncurses"
   CPPFLAGS=-P ./configure --prefix="$C9_DIR/local" --without-tests --without-cxx
-  echo "Compiling Ncurses"
+  echo ":: Compiling Ncurses"
   make
-  echo "Installing Ncurses"
+  echo ":: Installing Ncurses"
   make install
  
   cd "$C9_DIR"
-  echo "Compiling tmux..."
-  tar xzf tmux-1.9.tar.gz
-  rm tmux-1.9.tar.gz
-  cd tmux-1.9
-  echo "Configuring Tmux"
-  ./configure CFLAGS="-I$C9_DIR/local/include -I$C9_DIR/local/include/ncurses" CPPFLAGS="-I$C9_DIR/local/include -I$C9_DIR/local/include/ncurses" LDFLAGS="-static-libgcc -L$C9_DIR/local/lib" LIBEVENT_CFLAGS="-I$C9_DIR/local/include" LIBEVENT_LIBS="-static -L$C9_DIR/local/lib -levent" LIBS="-L$C9_DIR/local/lib/ncurses -lncurses" --prefix="$C9_DIR/local"
-  echo "Compiling Tmux"
+  echo ":: Compiling tmux..."
+  tar xzf "${FILE_TMUX}";
+  #rm "${FILE_TMUX_NAME}";
+  cd "${FILE_TMUX_NAME}";
+  echo ":: Configuring Tmux"
+  ./configure CFLAGS="-I$C9_DIR/local/include -I$C9_DIR/local/include/ncurses" LDFLAGS="-static-libgcc -L$C9_DIR/local/lib" --prefix="$C9_DIR/local"
+  echo ":: Compiling Tmux"
   make
-  echo "Installing Tmux"
+  echo ":: Installing Tmux"
   make install
 }
 
-tmux_download(){
+tmux_download()
+{
   echo "Downloading tmux source code"
-  echo "N.B: This will take a while. To speed this up install tmux 1.9 manually on your machine and restart this process."
+  echo "N.B: This will take a while. To speed this up install ${FILE_TMUX_NAME} manually on your machine and restart this process."
   
   echo "Downloading Libevent..."
-  $DOWNLOAD https://raw.githubusercontent.com/c9/install/master/packages/tmux/libevent-2.0.21-stable.tar.gz
+  $DOWNLOAD "https://raw.githubusercontent.com/c9/install/master/packages/tmux/${FILE_LIBEVENT}"
   echo "Downloading Ncurses..."
-  $DOWNLOAD https://raw.githubusercontent.com/c9/install/master/packages/tmux/ncurses-5.9.tar.gz
+  $DOWNLOAD "https://raw.githubusercontent.com/c9/install/master/packages/tmux/${FILE_LIBNCURSE}"
   echo "Downloading Tmux..."
-  $DOWNLOAD https://raw.githubusercontent.com/c9/install/master/packages/tmux/tmux-1.9.tar.gz
+  $DOWNLOAD "https://github.com/tmux/tmux/releases/download/${VERSION_TMUX}/${FILE_TMUX}"
 }
 
 check_tmux_version(){

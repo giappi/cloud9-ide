@@ -54,13 +54,17 @@
         "limiter": "^1.1.0",
         "mocha": "1.8.2"
     },
-    "scripts": {
-        "start": "node server.js"
+    "scripts":
+    {
+        "start": "node server.js -a :"
     },
     "devDependencies": {},
     "licenses": [],
-    "engines": {
-        "npm": "2.15.9"
+    "engines":
+    {
+        "node": "4.6.1",
+        "npm": "2.15.9",
+        "tmux" : "1.8"
     },
     "engineStrict": true
 }
