@@ -1,6 +1,9 @@
 define(function(require, exports, module) {
     main.consumes = ["Plugin", "automate", "vfs", "c9", "proc", "fs", "error_handler"];
     main.provides = ["installer"];
+    const installationPath = "~/.c9/installed_3";
+    const DISABLE_INSTALLER = true;
+
     return main;
 
     function main(options, imports, register) {
@@ -67,26 +70,45 @@ define(function(require, exports, module) {
         
         /***** Methods *****/
         
-        function simpleInstallRead() {
-            var path = options.installPath.replace(c9.home, "~") + "/installed";
-            fs.readFile(path, function(err, data) {
-                if (err) {
+        function simpleInstallRead()
+        {
+            var path = installationPath;
+            console.log(`[Giappi] installer.js/simpleInstallRead ${path} checked exist = ${fs.exists(path)}`);
+            fs.readFile(path, function(err, data)
+            {
+                if (err)
+                {
                     if (err.code == "ENOENT")
+                    {
                         data = "";
-                    else {
-                        c9.once("connect", simpleInstallRead);
-                        return;
+                    }
+                    else
+                    {
+                        if(DISABLE_INSTALLER)
+                        {
+                            c9.once("connect", simpleInstallRead);
+                            return;
+                        }
                     }
                 }
                 
                 parse(data);
                 emit.sticky("ready", installed);
             });
+
         }
         
-        function parse(data) {
+        function parse(data)
+        {
+            if(DISABLE_INSTALLER)
+            {
+                data = "1";
+            }
             if (data.match(/^1[\r\n]*$/)) // Backwards compatibility
+            {
                 data = "Cloud9 IDE@1\nc9.ide.collab@1\nc9.ide.find@1\nCloud9 CLI@1";
+                console.log(`data='${data}'`);
+            }
             
             installed = {};
             data.split("\n").forEach(function(line) {
@@ -95,11 +117,13 @@ define(function(require, exports, module) {
                 installed[p[0]] = parseInt(p[1], 10) || 0;
             });
             
-            if (!installSelfCheck) {
+            if (!installSelfCheck)
+            {
                 installed["Cloud9 IDE"] = 1;
                 installed["c9.ide.collab"] = 1;
                 installed["c9.ide.find"] = 1;
                 installed["Cloud9 CLI"] = 1;
+                console.log("!installSelfCheck");
             }
         }
         
@@ -135,12 +159,26 @@ define(function(require, exports, module) {
                 
                 emit.sticky("ready", installed);
             }
-            
-            vfs.readfile(options.installPath.replace(c9.home, "~") + "/installed", {
+            let path = installationPath;
+            vfs.readfile(path,
+            {
                 encoding: "utf8"
-            }, function(err, meta) {
-                if (err) {
-                    if (err.code == "ENOENT") done(err);
+            }, function(err, meta)
+            {
+                if (err)
+                {
+                    if (err.code == "ENOENT")
+                    {
+                        if(DISABLE_INSTALLER)
+                        {
+                            parse(data);
+                            done();
+                        }
+                        else
+                        {
+                            done(err);
+                        }
+                    }
                     return; // Wait for reconnect to try again
                 }
                 
@@ -282,7 +320,7 @@ define(function(require, exports, module) {
                     var contents = Object.keys(installed).map(function(item) {
                         return item + "@" + installed[item];
                     }).join("\n");
-                    fs.writeFile("~/.c9/installed", contents, function() {
+                    fs.writeFile(installationPath, contents, function() {
                         callback && callback(err);
                     });
                 }
